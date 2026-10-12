@@ -22,11 +22,12 @@ Also works with the full angles.csv (it looks up the columns by name), but
 that file is much larger.
 """
 
+import os
 import time
 from machine import Pin, PWM
 
 # ======================= Settings =======================
-PATH_FILE = "LogoName_esp32.csv"
+PATH_FILE = "tufts_t_esp32.csv"
 
 SHOULDER_PIN = 4
 ELBOW_PIN = 5
@@ -58,15 +59,12 @@ def set_pulse(pwm, us):
 
 
 def make_servo(pin, us):
-    """Start the PWM already at the first position, so the servo doesn't
-    jump to a random angle first."""
-    us = min(max(us, PULSE_MIN_US), PULSE_MAX_US)
-    try:
-        return PWM(Pin(pin), freq=50, duty_ns=us * 1000)
-    except (TypeError, ValueError):
-        pwm = PWM(Pin(pin), freq=50)
-        set_pulse(pwm, us)
-        return pwm
+    """Create the output with no pulse (duty 0, so the servo doesn't move),
+    then send the first position. This is the order that works on this
+    board's MicroPython version."""
+    pwm = PWM(Pin(pin), freq=50, duty_u16=0)
+    set_pulse(pwm, us)
+    return pwm
 
 
 def rows(path):
@@ -108,6 +106,7 @@ def survey(path):
 
 def main():
     led = Pin(LED_PIN, Pin.OUT, value=0)
+    print("MicroPython", os.uname().release)
 
     print("Reading", PATH_FILE, "...")
     first, n, lines, total_ms = survey(PATH_FILE)
