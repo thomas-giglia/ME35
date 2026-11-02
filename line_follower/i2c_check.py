@@ -43,7 +43,7 @@ for a, b in PIN_SETS:
 
 print("What the results mean:")
 print("  0x29 found         -> TCS34725, the chip the code expects")
-print("  other address      -> a different sensor chip; tell Claude the address")
+print("  other address      -> a different sensor chip")
 print("                        and the name printed on the sensor board")
 print("  only found by the  -> missing pull-up resistors (the code can")
 print("  software scan         be switched to use internal pull-ups)")
